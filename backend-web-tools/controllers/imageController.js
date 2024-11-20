@@ -1,6 +1,9 @@
 const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
+const os = require("os");
+
+const tmpPath = process.env.NODE_ENV === "production" ? "/tmp" : os.tmpdir();
 
 function deleteFileAfterTimeout(filePath, timeout) {
   setTimeout(() => {
@@ -20,8 +23,7 @@ const resizeImage = async (req, res) => {
   try {
     const imagePath = req.file.path;
     const resizedImagePath = path.join(
-      __dirname,
-      "../tmp",
+      tmpPath,
       `resized-${req.file.originalname}`
     );
 
@@ -42,7 +44,7 @@ const resizeImage = async (req, res) => {
 };
 
 const serveFile = (req, res) => {
-  const filePath = path.join(__dirname, "../tmp", req.params.filename);
+  const filePath = path.join(tmpPath, req.params.filename);
   if (fs.existsSync(filePath)) {
     res.sendFile(filePath);
   } else {
@@ -51,7 +53,7 @@ const serveFile = (req, res) => {
 };
 
 const downloadFile = (req, res) => {
-  const filePath = path.join(__dirname, "../tmp", req.params.filename);
+  const filePath = path.join(tmpPath, req.params.filename);
   if (fs.existsSync(filePath)) {
     res.download(filePath, req.params.filename);
   } else {
