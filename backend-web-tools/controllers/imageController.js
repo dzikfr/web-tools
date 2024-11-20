@@ -21,7 +21,7 @@ const resizeImage = async (req, res) => {
     const imagePath = req.file.path;
     const resizedImagePath = path.join(
       __dirname,
-      "../uploads",
+      "../tmp",
       `resized-${req.file.originalname}`
     );
 
@@ -31,7 +31,7 @@ const resizeImage = async (req, res) => {
 
     res
       .status(200)
-      .json({ url: `/uploads/${path.basename(resizedImagePath)}` });
+      .json({ url: `/tmp/${path.basename(resizedImagePath)}` });
 
     deleteFileAfterTimeout(imagePath, 600000);
     deleteFileAfterTimeout(resizedImagePath, 600000);
@@ -42,7 +42,7 @@ const resizeImage = async (req, res) => {
 };
 
 const serveFile = (req, res) => {
-  const filePath = path.join(__dirname, "../uploads", req.params.filename);
+  const filePath = path.join(__dirname, "../tmp", req.params.filename);
   if (fs.existsSync(filePath)) {
     res.sendFile(filePath);
   } else {
@@ -51,7 +51,7 @@ const serveFile = (req, res) => {
 };
 
 const downloadFile = (req, res) => {
-  const filePath = path.join(__dirname, "../uploads", req.params.filename);
+  const filePath = path.join(__dirname, "../tmp", req.params.filename);
   if (fs.existsSync(filePath)) {
     res.download(filePath, req.params.filename);
   } else {
